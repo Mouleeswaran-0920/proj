@@ -4,6 +4,7 @@ import { ExternalLink, Clock, Bookmark, BookmarkCheck, Share2, Eye, TrendingUp }
 import { NewsArticle } from '../types/news';
 import { useBookmarks } from '../hooks/useBookmarks';
 import { useAuth } from '../hooks/useAuth';
+import { supabase } from '../lib/supabase';
 
 interface NewsCardProps {
   article: NewsArticle;
@@ -17,6 +18,9 @@ export const NewsCard: React.FC<NewsCardProps> = ({ article, onReadMore }) => {
   const [imageError, setImageError] = useState(false);
   const timeAgo = formatDistanceToNow(new Date(article.publishedAt), { addSuffix: true });
   const bookmarked = isBookmarked(article.url);
+
+  // Only show bookmark features if Supabase is configured
+  const showBookmarkFeatures = !!supabase;
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -62,9 +66,8 @@ export const NewsCard: React.FC<NewsCardProps> = ({ article, onReadMore }) => {
   const handleBookmark = async (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    if (!user) {
-      // Could trigger auth modal here
-      console.log('Please sign in to bookmark articles');
+    if (!user || !showBookmarkFeatures) {
+      console.log('Authentication not available');
       return;
     }
 
@@ -113,17 +116,20 @@ export const NewsCard: React.FC<NewsCardProps> = ({ article, onReadMore }) => {
         
         {/* Action Buttons */}
         <div className="absolute top-3 right-3 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-          <button
-            onClick={handleBookmark}
-            className={`p-2.5 rounded-full backdrop-blur-sm hover:scale-110 transition-all duration-200 shadow-lg ${
-              bookmarked 
-                ? 'bg-blue-600 text-white shadow-blue-500/25' 
-                : 'bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 shadow-black/10'
-            }`}
-            aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark article'}
-          >
-            {bookmarked ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
-          </button>
+          {/* Only show bookmark button if authentication is available */}
+          {showBookmarkFeatures && (
+            <button
+              onClick={handleBookmark}
+              className={`p-2.5 rounded-full backdrop-blur-sm hover:scale-110 transition-all duration-200 shadow-lg ${
+                bookmarked 
+                  ? 'bg-blue-600 text-white shadow-blue-500/25' 
+                  : 'bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 shadow-black/10'
+              }`}
+              aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark article'}
+            >
+              {bookmarked ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
+            </button>
+          )}
           <button
             onClick={handleShare}
             className="p-2.5 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full hover:bg-white dark:hover:bg-gray-800 hover:scale-110 transition-all duration-200 shadow-lg shadow-black/10"

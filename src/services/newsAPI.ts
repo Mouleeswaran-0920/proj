@@ -4,75 +4,93 @@ import { NewsResponse, SearchFilters } from '../types/news';
 const GNEWS_API_KEY = import.meta.env.VITE_GNEWS_API_KEY;
 const BASE_URL = 'https://gnews.io/api/v4';
 
-// Mock data for fallback when API is not available
+// Enhanced mock data with more variety
 const MOCK_ARTICLES = [
   {
-    title: "Revolutionary AI Breakthrough Changes Everything",
-    description: "Scientists have developed a new AI system that can understand and generate human-like responses with unprecedented accuracy.",
-    content: "This groundbreaking development in artificial intelligence represents a significant leap forward in machine learning capabilities...",
-    url: "https://example.com/ai-breakthrough",
+    title: "Revolutionary AI Breakthrough: GPT-5 Announced with Unprecedented Capabilities",
+    description: "OpenAI unveils GPT-5 with groundbreaking multimodal capabilities, promising to revolutionize how we interact with artificial intelligence across industries.",
+    content: "This groundbreaking development in artificial intelligence represents a significant leap forward in machine learning capabilities, featuring advanced reasoning and creative problem-solving abilities...",
+    url: "https://example.com/ai-breakthrough-gpt5",
     image: "https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=800",
-    publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    source: { name: "Tech News", url: "https://technews.com" }
+    publishedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+    source: { name: "AI Today", url: "https://aitoday.com" }
   },
   {
-    title: "Web Development Trends for 2024",
-    description: "Explore the latest trends in web development including new frameworks, tools, and best practices that are shaping the industry.",
-    content: "The web development landscape continues to evolve rapidly with new technologies and methodologies...",
-    url: "https://example.com/web-dev-trends",
+    title: "Web Development Revolution: New React 19 Features Transform Frontend Development",
+    description: "React 19 introduces game-changing features including automatic batching, concurrent rendering improvements, and enhanced developer experience tools.",
+    content: "The latest React release brings significant performance improvements and developer experience enhancements that will reshape how we build modern web applications...",
+    url: "https://example.com/react-19-features",
     image: "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?auto=compress&cs=tinysrgb&w=800",
-    publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+    publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     source: { name: "Dev Weekly", url: "https://devweekly.com" }
   },
   {
-    title: "Cybersecurity Alert: New Threats Emerge",
-    description: "Security experts warn of sophisticated new cyber attacks targeting businesses and individuals worldwide.",
-    content: "Recent cybersecurity incidents have highlighted the need for enhanced protection measures...",
-    url: "https://example.com/cybersecurity-alert",
+    title: "Cybersecurity Alert: New Zero-Day Vulnerability Affects Millions of Devices",
+    description: "Security researchers discover critical vulnerability in widely-used networking equipment, prompting urgent patches from major manufacturers.",
+    content: "A newly discovered zero-day vulnerability has been found to affect millions of networking devices worldwide, raising serious concerns about infrastructure security...",
+    url: "https://example.com/cybersecurity-zero-day",
     image: "https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=800",
-    publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+    publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
     source: { name: "Security Today", url: "https://securitytoday.com" }
   },
   {
-    title: "Blockchain Technology Revolutionizes Finance",
-    description: "Major financial institutions are adopting blockchain technology to improve transaction security and efficiency.",
-    content: "The integration of blockchain technology in traditional finance is creating new opportunities...",
-    url: "https://example.com/blockchain-finance",
+    title: "Blockchain Innovation: Ethereum 2.0 Upgrade Reduces Energy Consumption by 99%",
+    description: "The completed Ethereum merge to proof-of-stake consensus mechanism delivers on promises of dramatically reduced environmental impact while maintaining security.",
+    content: "Ethereum's transition to proof-of-stake represents one of the most significant upgrades in blockchain history, addressing long-standing environmental concerns...",
+    url: "https://example.com/ethereum-energy-reduction",
     image: "https://images.pexels.com/photos/844124/pexels-photo-844124.jpeg?auto=compress&cs=tinysrgb&w=800",
-    publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+    publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
     source: { name: "Crypto News", url: "https://cryptonews.com" }
   },
   {
-    title: "Mobile App Development: Native vs Cross-Platform",
-    description: "Developers debate the merits of native versus cross-platform development approaches for mobile applications.",
-    content: "The choice between native and cross-platform development continues to be a key decision...",
-    url: "https://example.com/mobile-dev-comparison",
+    title: "Mobile Development Breakthrough: Flutter 4.0 Introduces Desktop-First Design",
+    description: "Google's Flutter framework expands beyond mobile with comprehensive desktop support, unified codebase, and native performance across all platforms.",
+    content: "Flutter 4.0 marks a significant milestone in cross-platform development, offering developers a truly unified solution for mobile, web, and desktop applications...",
+    url: "https://example.com/flutter-4-desktop",
     image: "https://images.pexels.com/photos/147413/twitter-facebook-together-exchange-of-information-147413.jpeg?auto=compress&cs=tinysrgb&w=800",
-    publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(),
+    publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
     source: { name: "Mobile Dev", url: "https://mobiledev.com" }
   },
   {
-    title: "Cloud Computing Costs Continue to Rise",
-    description: "Businesses are looking for ways to optimize their cloud infrastructure spending as costs continue to increase.",
-    content: "The growing reliance on cloud services has led to increased scrutiny of cloud computing costs...",
-    url: "https://example.com/cloud-costs",
+    title: "Cloud Computing Evolution: AWS Announces Quantum Computing Service for Enterprises",
+    description: "Amazon Web Services launches quantum computing platform, making quantum algorithms accessible to businesses through cloud infrastructure.",
+    content: "AWS's new quantum computing service democratizes access to quantum algorithms, potentially accelerating breakthroughs in optimization, cryptography, and machine learning...",
+    url: "https://example.com/aws-quantum-computing",
     image: "https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=800",
-    publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+    publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
     source: { name: "Cloud Weekly", url: "https://cloudweekly.com" }
+  },
+  {
+    title: "Startup Success: AI-Powered Healthcare Platform Raises $100M Series B",
+    description: "Revolutionary healthcare AI startup secures major funding to expand personalized medicine platform across global markets.",
+    content: "The funding round highlights growing investor confidence in AI-driven healthcare solutions that promise to transform patient care and medical diagnostics...",
+    url: "https://example.com/healthcare-ai-funding",
+    image: "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=800",
+    publishedAt: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(),
+    source: { name: "Startup News", url: "https://startupnews.com" }
+  },
+  {
+    title: "Tech Hardware Innovation: Apple's M4 Chip Delivers 40% Performance Boost",
+    description: "Apple's latest silicon breakthrough promises unprecedented performance and efficiency gains for next-generation MacBooks and iPads.",
+    content: "The M4 chip represents Apple's continued push toward custom silicon dominance, featuring advanced neural processing units and industry-leading power efficiency...",
+    url: "https://example.com/apple-m4-chip",
+    image: "https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=800",
+    publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+    source: { name: "Tech Review", url: "https://techreview.com" }
   }
 ];
 
-// Create axios instance with default config
+// Create axios instance with better error handling
 const apiClient = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000,
+  timeout: 15000,
   headers: {
     'Cache-Control': 'no-cache',
     'Pragma': 'no-cache',
   },
 });
 
-// Add request interceptor
+// Enhanced request interceptor
 apiClient.interceptors.request.use(
   (config) => {
     console.log('🚀 Making API request:', {
@@ -81,6 +99,7 @@ apiClient.interceptors.request.use(
       method: config.method
     });
     
+    // Add timestamp to prevent caching
     config.params = {
       ...config.params,
       _t: Date.now(),
@@ -93,7 +112,7 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Add response interceptor
+// Enhanced response interceptor
 apiClient.interceptors.response.use(
   (response) => {
     console.log('✅ API response received:', {
@@ -108,33 +127,35 @@ apiClient.interceptors.response.use(
       status: error.response?.status,
       statusText: error.response?.statusText,
       data: error.response?.data,
-      message: error.message
+      message: error.message,
+      code: error.code
     });
 
+    // Enhanced error handling
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 429) {
-        throw new Error('Rate limit exceeded. Please try again in a moment.');
+        throw new Error('Rate limit exceeded. Using cached content.');
       } else if (error.response?.status === 401) {
-        throw new Error('Invalid API key. Please check your configuration.');
+        throw new Error('API key invalid. Using offline content.');
       } else if (error.response?.status === 403) {
-        throw new Error('Access forbidden. Please check your API permissions.');
+        throw new Error('Access forbidden. Using cached content.');
       } else if (error.response?.status >= 500) {
-        throw new Error('News service is temporarily unavailable. Please try again later.');
+        throw new Error('News service temporarily unavailable. Using offline content.');
       } else if (error.code === 'ECONNABORTED') {
-        throw new Error('Request timeout. Please check your internet connection.');
+        throw new Error('Request timeout. Using cached content.');
       } else if (error.code === 'ERR_NETWORK') {
-        throw new Error('Network error. Please check your internet connection.');
+        throw new Error('Network error. Using offline content.');
       }
     }
-    throw new Error('Failed to fetch news. Please try again later.');
+    throw new Error('Using offline content due to connectivity issues.');
   }
 );
 
 class NewsAPI {
   private async fetchFromGNews(endpoint: string, params: Record<string, string>) {
-    // Check if API key is available
-    if (!GNEWS_API_KEY) {
-      console.warn('⚠️ GNews API key not configured, using mock data');
+    // Always check API key first
+    if (!GNEWS_API_KEY || GNEWS_API_KEY === 'your_gnews_api_key_here') {
+      console.warn('⚠️ GNews API key not configured, using enhanced mock data');
       return this.getMockData();
     }
 
@@ -155,13 +176,13 @@ class NewsAPI {
       
       return response.data;
     } catch (error) {
-      console.error('🔥 GNews API Error, falling back to mock data:', error);
+      console.error('🔥 GNews API Error, falling back to enhanced mock data:', error);
       return this.getMockData();
     }
   }
 
   private getMockData() {
-    console.log('📰 Using mock data');
+    console.log('📰 Using enhanced mock data with', MOCK_ARTICLES.length, 'articles');
     return {
       totalArticles: MOCK_ARTICLES.length,
       articles: MOCK_ARTICLES
@@ -185,7 +206,7 @@ class NewsAPI {
     const data = await this.fetchFromGNews('/search', params);
     const processedArticles = this.processArticles(data.articles || []);
     
-    console.log('📰 Processed articles:', {
+    console.log('📰 Processed search articles:', {
       original: data.articles?.length || 0,
       processed: processedArticles.length
     });
@@ -223,17 +244,17 @@ class NewsAPI {
     console.log('🏷️ Fetching news by category:', category);
     
     const categoryQueries: Record<string, string> = {
-      'ai': 'artificial intelligence OR machine learning OR AI OR ML OR deep learning OR neural networks OR ChatGPT OR OpenAI',
-      'webdev': 'web development OR frontend OR backend OR javascript OR react OR nodejs OR vue OR angular OR typescript OR CSS',
-      'mobile': 'mobile development OR iOS OR Android OR React Native OR Flutter OR Swift OR Kotlin OR mobile apps',
-      'cybersecurity': 'cybersecurity OR security OR hacking OR privacy OR data breach OR malware OR encryption OR ransomware',
-      'cloud': 'cloud computing OR AWS OR Azure OR Google Cloud OR serverless OR kubernetes OR docker OR microservices',
-      'blockchain': 'blockchain OR cryptocurrency OR bitcoin OR ethereum OR web3 OR NFT OR DeFi OR crypto OR smart contracts',
-      'startup': 'startup OR venture capital OR funding OR IPO OR tech companies OR unicorn OR Series A OR entrepreneurship',
-      'gadgets': 'gadgets OR hardware OR smartphone OR laptop OR tech reviews OR Apple OR Samsung OR Google OR electronics'
+      'ai': 'artificial intelligence OR machine learning OR AI OR ML OR deep learning OR neural networks OR ChatGPT OR OpenAI OR Claude OR Gemini',
+      'webdev': 'web development OR frontend OR backend OR javascript OR react OR nodejs OR vue OR angular OR typescript OR CSS OR HTML',
+      'mobile': 'mobile development OR iOS OR Android OR React Native OR Flutter OR Swift OR Kotlin OR mobile apps OR smartphone',
+      'cybersecurity': 'cybersecurity OR security OR hacking OR privacy OR data breach OR malware OR encryption OR ransomware OR firewall',
+      'cloud': 'cloud computing OR AWS OR Azure OR Google Cloud OR serverless OR kubernetes OR docker OR microservices OR DevOps',
+      'blockchain': 'blockchain OR cryptocurrency OR bitcoin OR ethereum OR web3 OR NFT OR DeFi OR crypto OR smart contracts OR metaverse',
+      'startup': 'startup OR venture capital OR funding OR IPO OR tech companies OR unicorn OR Series A OR entrepreneurship OR innovation',
+      'gadgets': 'gadgets OR hardware OR smartphone OR laptop OR tech reviews OR Apple OR Samsung OR Google OR electronics OR wearables'
     };
 
-    const query = categoryQueries[category] || 'technology OR tech OR programming OR software OR innovation';
+    const query = categoryQueries[category] || 'technology OR tech OR programming OR software OR innovation OR digital';
     
     return this.searchNews({
       query,
@@ -256,7 +277,7 @@ class NewsAPI {
         article.publishedAt;
       
       if (!isValid) {
-        console.log('❌ Invalid article filtered out:', article);
+        console.log('❌ Invalid article filtered out:', article?.title || 'Unknown');
       }
       
       return isValid;
@@ -303,7 +324,7 @@ class NewsAPI {
       .replace(/<[^>]*>/g, '')
       .replace(/&[^;]+;/g, ' ')
       .trim()
-      .substring(0, 200);
+      .substring(0, 300);
   }
 
   private validateDate(dateString: string): string {

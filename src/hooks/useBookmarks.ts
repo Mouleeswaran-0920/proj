@@ -12,7 +12,7 @@ export const useBookmarks = () => {
   const [bookmarkedUrls, setBookmarkedUrls] = useState<Set<string>>(new Set());
 
   const fetchBookmarks = async () => {
-    if (!user) return;
+    if (!user || !supabase) return;
 
     setLoading(true);
     try {
@@ -34,7 +34,7 @@ export const useBookmarks = () => {
   };
 
   const addBookmark = async (article: NewsArticle) => {
-    if (!user) return { error: 'User not authenticated' };
+    if (!user || !supabase) return { error: 'Authentication not available' };
 
     try {
       const { data, error } = await supabase
@@ -65,7 +65,7 @@ export const useBookmarks = () => {
   };
 
   const removeBookmark = async (articleUrl: string) => {
-    if (!user) return { error: 'User not authenticated' };
+    if (!user || !supabase) return { error: 'Authentication not available' };
 
     try {
       const { error } = await supabase
@@ -95,7 +95,7 @@ export const useBookmarks = () => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user && supabase) {
       fetchBookmarks();
     } else {
       setBookmarks([]);

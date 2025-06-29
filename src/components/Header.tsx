@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Search, Zap, Moon, Sun, LogIn, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { Search, Zap, Moon, Sun, RefreshCw, Wifi, WifiOff } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { UserMenu } from './UserMenu';
 import { AuthModal } from './AuthModal';
 import { BookmarksModal } from './BookmarksModal';
+import { supabase } from '../lib/supabase';
 
 interface HeaderProps {
   searchQuery: string;
@@ -59,6 +60,9 @@ export const Header: React.FC<HeaderProps> = ({
     
     return date.toLocaleDateString();
   };
+
+  // Only show auth-related features if Supabase is configured
+  const showAuthFeatures = !!supabase;
 
   return (
     <>
@@ -116,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="flex flex-col items-center">
                     <button
                       onClick={onRefresh}
-                      disabled={isRefreshing || !isOnline}
+                      disabled={isRefreshing}
                       className={`p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md ${
                         isRefreshing ? 'animate-spin' : 'hover:scale-105'
                       }`}
@@ -143,34 +147,41 @@ export const Header: React.FC<HeaderProps> = ({
                 {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
 
-              {/* Auth Section */}
-              {loading ? (
-                <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
-              ) : user ? (
-                <UserMenu onShowBookmarks={() => setShowBookmarksModal(true)} />
-              ) : (
-                <button
-                  onClick={() => setShowAuthModal(true)}
-                  className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-                >
-                  <LogIn className="h-4 w-4" />
-                  <span className="hidden sm:block">Sign In</span>
-                </button>
+              {/* Auth Section - Only show if Supabase is configured */}
+              {showAuthFeatures && (
+                <>
+                  {loading ? (
+                    <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse" />
+                  ) : user ? (
+                    <UserMenu onShowBookmarks={() => setShowBookmarksModal(true)} />
+                  ) : (
+                    <button
+                      onClick={() => setShowAuthModal(true)}
+                      className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                    >
+                      <span className="hidden sm:block">Sign In</span>
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
         </div>
       </header>
 
-      {/* Modals */}
-      <AuthModal 
-        isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
-      />
-      <BookmarksModal 
-        isOpen={showBookmarksModal} 
-        onClose={() => setShowBookmarksModal(false)} 
-      />
+      {/* Modals - Only render if Supabase is configured */}
+      {showAuthFeatures && (
+        <>
+          <AuthModal 
+            isOpen={showAuthModal} 
+            onClose={() => setShowAuthModal(false)} 
+          />
+          <BookmarksModal 
+            isOpen={showBookmarksModal} 
+            onClose={() => setShowBookmarksModal(false)} 
+          />
+        </>
+      )}
     </>
   );
 };
