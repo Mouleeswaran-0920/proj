@@ -284,7 +284,9 @@ class NewsAPI {
   }
 
   private validateImageUrl(imageUrl: string | null): string | null {
-    if (!imageUrl) return null;
+    if (!imageUrl || typeof imageUrl !== 'string' || imageUrl.trim() === '') {
+      return null;
+    }
     
     try {
       new URL(imageUrl);
